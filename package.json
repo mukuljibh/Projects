@@ -1,0 +1,21 @@
+{
+  "name": "keeper-project",
+  "version": "1.0.0",
+  "description": "Keeper app that stores the importent to do work by an individual ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mukul bhardwaj",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "git": "^0.1.5",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.2.2",
+    "nodemon": "^3.1.0"
+  }
+}
