@@ -5,7 +5,7 @@ import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { SnackbarProvider } from 'notistack';
-
+import { insertDb, getdb, updateDb, deleteDb } from "./DatabaseReq";
 function App() {
     const [notes, setNotes] = useState([]);
 
@@ -23,43 +23,12 @@ function App() {
         InitialFetchNotes();
     }, [])
 
-    async function insertdb(newNote) {
-        try {
-            await axios.post('http://localhost:4000/add', newNote); // Use the correct URL for inserting data
-            setNotes((prevNotes) => {//inserting the new note while inserting the note into the database
-                return [...prevNotes, newNote];
-            });
-            console.log("Inserted successfully");
-        } catch (error) {
-            console.error('Error inserting data:', error);
-            throw error; // Optional: rethrow the error for higher-level error handling
-        }
-    }
-    async function getdb() {
-        try {
-            const response = await axios.get('http://localhost:4000/get');
-            return response.data
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            throw error; // Optional: rethrow the error for higher-level error handling
-        }
-    }
-    async function updateDb(updateNote, uniqueObjId) {// This module update a particular note
-        try {
-            await axios.patch('http://localhost:4000/modify', {
-                _id: uniqueObjId,
-                title: updateNote.title,
-                content: updateNote.content
-            })
-        }
-        catch (error) {
-            console.log("501")
-        }
-
-    }
 
     async function addNote(newNote) {
-        await insertdb(newNote)
+        await insertDb(newNote)
+        setNotes((prevNotes) => {//display the new note after inserting the note into the database minimize datbase calling
+            return [...prevNotes, newNote];
+        });
         let noteLists = await getdb();//this will continues after useeffect
         setNotes([...noteLists])
 
@@ -70,14 +39,8 @@ function App() {
             return index !== id;
         });//this part does not require to hit database
         setNotes([...data])
-        try {
-            axios.patch('http://localhost:4000/update', {
-                object_id
-            })
-            console.log("Delete Success!")
-        } catch (err) {
-            console.log("Error while deleting")
-        }
+        deleteDb(object_id)
+
     }
     async function updateNote(updateNote, uniqueObjId, index) {
         let prevNote = notes[index];
@@ -102,7 +65,6 @@ function App() {
 
     return (
         <div>
-
             <Header />
             <SnackbarProvider><CreateArea onAdd={addNote} /></SnackbarProvider>
             <SnackbarProvider maxSnack={3}>
