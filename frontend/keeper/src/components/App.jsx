@@ -24,6 +24,7 @@ function App() {
     }, [])
 
 
+
     async function addNote(newNote) {
         await insertDb(newNote)
         setNotes((prevNotes) => {//display the new note after inserting the note into the database minimize datbase calling
