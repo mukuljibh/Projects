@@ -9,10 +9,11 @@ function CreateArea(props) {
     const { enqueueSnackbar } = useSnackbar();
     const [note, setNote] = useState({
         title: "",
-        content: ""
+        content: "",
+        bookmark: false
     });
-
-    function handleChange(event) {
+    //function trigger the input boxes title and content and encapsulate these two into object
+    function handleChangeInput(event) {
         const { name, value } = event.target;
 
         setNote(prevNote => {
@@ -22,14 +23,17 @@ function CreateArea(props) {
             };
         });
     }
-
+    //function trigger on add note "+"
     function submitNote(event) {
-        props.onAdd(note);
+        props.onAdd(note, event);
         setNote({
             title: "",
-            content: ""
+            content: "",
+            bookmark: false
         });
+
         event.preventDefault();
+
     }
 
     function expand() {
@@ -45,7 +49,7 @@ function CreateArea(props) {
                 {isExpanded && (
                     <input
                         name="title"
-                        onChange={handleChange}
+                        onChange={handleChangeInput}
                         value={note.title}
                         placeholder="Title"
                     />
@@ -54,7 +58,7 @@ function CreateArea(props) {
                 <textarea
                     name="content"
                     onClick={expand}
-                    onChange={handleChange}
+                    onChange={handleChangeInput}
                     value={note.content}
                     placeholder="Take a note..."
                     rows={isExpanded ? 3 : 1}

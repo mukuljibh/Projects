@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
@@ -30,17 +29,22 @@ function App() {
         setNotes((prevNotes) => {//display the new note after inserting the note into the database minimize datbase calling
             return [...prevNotes, newNote];
         });
+
+        //mark for inspection no use of this
+
         let noteLists = await getdb();//this will continues after useeffect
         setNotes([...noteLists])
 
+
     }
 
-    function deleteNote(id, object_id) {
+    async function deleteNote(id, object_id) {
         let data = notes.filter((noteItem, index) => {
             return index !== id;
         });//this part does not require to hit database
+
+        await deleteDb(object_id)
         setNotes([...data])
-        deleteDb(object_id)
 
     }
     async function updateNote(updateNote, uniqueObjId, index) {
@@ -60,7 +64,7 @@ function App() {
             updateNote.content = prevNote.content;
         }
         console.log(updateNote)
-        updateDb(updateNote, uniqueObjId)
+        await updateDb(updateNote, uniqueObjId)
 
     }
 
