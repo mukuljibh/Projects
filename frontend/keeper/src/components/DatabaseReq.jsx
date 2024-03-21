@@ -1,5 +1,5 @@
-
 import axios from 'axios';
+
 async function insertDb(newNote) {
     try {
         await axios.post('http://localhost:4000/add', newNote); // Use the correct URL for inserting data
@@ -21,13 +21,13 @@ async function getdb() {
         throw error; // Optional: rethrow the error for higher-level error handling
     }
 }
-async function updateDb(updateNote, uniqueObjId, bookmark) {// This module update a particular note
+async function updateDb(updateNote, uniqueObjId) {// This module update a particular note
     try {
         await axios.patch('http://localhost:4000/modify', {
             _id: uniqueObjId,
             title: updateNote.title,
             content: updateNote.content,
-            Bookmark: bookmark
+            Bookmark: updateNote.Bookmark
         })
         console.log("update success")
     }
@@ -38,9 +38,16 @@ async function updateDb(updateNote, uniqueObjId, bookmark) {// This module updat
 }
 async function deleteDb(object_id) {
     try {
-        await axios.delete('http://localhost:4000/deleteOne', {
-            data: { object_id }
+        //introducing 500ms delay so that database does not overloaded
+        await new Promise((resolve, reject) => {
+            setTimeout(async () => {
+                await axios.delete('http://localhost:4000/deleteOne', {
+                    data: { object_id }
+                })
+                return resolve()
+            }, 500)
         })
+
         console.log("Delete Success!")
 
     } catch (err) {

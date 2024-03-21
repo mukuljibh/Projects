@@ -5,9 +5,10 @@ import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { SnackbarProvider } from 'notistack';
 import { insertDb, getdb, updateDb, deleteDb } from "./DatabaseReq";
+import CircularProgress from '@mui/material/CircularProgress';
 function App() {
     const [notes, setNotes] = useState([]);
-
+    const [loading, setLoading] = useState(false);
     useEffect(() => {//this will fetch intiall data from the api 
         async function InitialFetchNotes() {
             try {
@@ -22,30 +23,33 @@ function App() {
         InitialFetchNotes();
     }, [])
 
-
-
     async function addNote(newNote) {
+        console.log("add note in appjs", newNote)
         await insertDb(newNote)
         setNotes((prevNotes) => {//display the new note after inserting the note into the database minimize datbase calling
             return [...prevNotes, newNote];
         });
-
         //mark for inspection no use of this
-
         let noteLists = await getdb();//this will continues after useeffect
         setNotes([...noteLists])
-
-
     }
 
-    async function deleteNote(id, object_id) {
+    function deleteNote(id, object_id) {
+        /*
         let data = notes.filter((noteItem, index) => {
             return index !== id;
-        });//this part does not require to hit database
-
-        await deleteDb(object_id)
-        setNotes([...data])
-
+        });*/
+        //this part does not require to hit database
+        //loading changing the loading state
+        setLoading(true);
+        //this will wait till database req has been complete after that then execute
+        deleteDb(object_id).then(x => {
+            let data = notes.filter((noteItem, index) => {
+                return index !== id;
+            });
+            setNotes([...data])
+            setLoading(false);
+        })
     }
     async function updateNote(updateNote, uniqueObjId, index) {
         let prevNote = notes[index];
@@ -63,7 +67,7 @@ function App() {
         else if (updateNote.content.length === 0) {
             updateNote.content = prevNote.content;
         }
-        console.log(updateNote)
+
         await updateDb(updateNote, uniqueObjId)
 
     }
@@ -73,15 +77,19 @@ function App() {
             <Header />
             <SnackbarProvider><CreateArea onAdd={addNote} /></SnackbarProvider>
             <SnackbarProvider maxSnack={3}>
+                {
+                    loading ? <CircularProgress /> : null
+                }
                 {notes.map((noteItem, index) => {
                     return (
-
                         <Note
                             key={index}
                             id={index}
+
                             object_id={noteItem._id}
                             title={noteItem.title}
                             content={noteItem.content}
+                            Bookmark={noteItem.Bookmark}
                             onDelete={deleteNote}
                             onUpdate={updateNote}
                         />

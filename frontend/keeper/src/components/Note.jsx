@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from "@material-ui/core/Fab";
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { useSnackbar } from 'notistack';
 import Bookmark from "@mui/icons-material/Bookmark";
-import { getdb, updateDb } from "./DatabaseReq";
+import { updateDb } from "./DatabaseReq";
+import Message from "./Message";
+import { useSnackbar } from 'notistack';
+
 
 function Note(props) {
-    const { enqueueSnackbar } = useSnackbar();
+
     const [eventUpdateHandle, seteventUpdateHandle] = useState({ title: "", content: "", Bookmark: false });
-    const [mark, setmark] = useState(false);
+    const [mark, setmark] = useState(false);//set state asynch does not reflect immediate changes that why 
+    const { enqueueSnackbar } = useSnackbar();
+    //for fetching the particular note by using dependency array for updating the state of bookmark 
+    useEffect(() => {
+        setmark(props.Bookmark)
+    }, [props.Bookmark])
 
     function handledelete(event) {
         props.onDelete(props.id, props.object_id);
@@ -24,28 +31,27 @@ function Note(props) {
                 ...prev, [type]: name
             }
         })
-
     }
-
-    function Message(msg, variant) {
-        enqueueSnackbar(msg, { variant });
-    }
-
     async function BookmarkHandle() {
-        setmark((prev) => {
-            eventUpdateHandle.Bookmark = !prev
-            return !prev;
+        const newMark = !mark;
+        setmark(newMark);
+        seteventUpdateHandle((prev) => {
+            return { ...prev, Bookmark: newMark }
         })
-        console.log(props)
-        let data = await getdb();
-
-        await updateDb(data[props.id], props.object_id, eventUpdateHandle.Bookmark)
-
-        if (mark === false) {
-            Message("Bookmarked", 'success')
+        //making object ready for updation into the db
+        const obj = {
+            _id: props.object_id,
+            title: props.title,
+            content: props.content,
+            Bookmark: newMark
         }
 
+        await updateDb(obj, props.object_id)
+        if (newMark === true) {
+            Message(enqueueSnackbar, "Bookmarked", 'success')
+        }
     }
+
     return (
         <div className="note">
             {mark ? <BookmarkIcon className="bookmark" /> : null}
@@ -71,14 +77,14 @@ function Note(props) {
                             content: eventUpdateHandle.content
                         }*/
                         await props.onUpdate(eventUpdateHandle, props.object_id, props.id)
-                        Message('Updated', 'success')
+                        Message(enqueueSnackbar, 'Updated', 'success')
 
                     }} />
                 </Fab>
                 <Fab size="small" onClick={handledelete}>
 
                     <DeleteIcon onClick={() => {
-                        Message('deleted', 'success')
+                        Message(enqueueSnackbar, 'deleted', 'success')
                     }} />
 
                 </Fab>

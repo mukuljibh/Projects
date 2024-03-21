@@ -12,7 +12,7 @@ const connection = new MongoClient(connectionString);//main connection object
 
 app.use(bodyParser.urlencoded({ extended: true }))//middle which fetches the form data like{id,title,content}
 app.use(bodyParser.json());
-app.use(cors())
+app.use(cors())//for cross generation support
 
 // database connection establishment
 try {
@@ -23,7 +23,7 @@ catch (error) {
     console.log('Database unreachable');
 }
 
-//fetching all notes form the database
+//fetching all notes from the database
 app.get("/get", async (req, res) => {
     try {
         const db = connection.db(database_name);
@@ -40,14 +40,12 @@ app.get("/get", async (req, res) => {
 app.post("/add", async (req, res) => {
     try {
         const userNote = req.body
-        console.log(userNote)
         const db = connection.db(database_name);
         const collection = db.collection('notes');
         await collection.insertOne({ title: userNote.title, content: userNote.content, Bookmark: userNote.bookmark })
         res.status(200).json({ message: "Note added successfully" });//.json is nesscary so that await for returning proper promise
     } catch (error) {
         console.error('Error inserting data:', error);
-        // res.status(500)
         res.status(500).json({ error: "An error occurred while adding the note" });
     }
 })
@@ -60,7 +58,6 @@ app.delete("/deleteOne", async (req, res) => {
         const db = connection.db(database_name);
         const collection = db.collection('notes');
         await collection.deleteOne({ _id: noteId })
-
         res.status(200).json({ message: "Note deleted successfully" });
     } catch (error) {
         res.status(501).json({ message: "error while deleting something" });
