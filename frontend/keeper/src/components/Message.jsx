@@ -1,6 +1,6 @@
-function Message(e, msg, variant) {
+function Message(hook, msg, variant) {
 
-    e(msg, { variant });
+    hook(msg, { variant });
 
 }
 export default Message;

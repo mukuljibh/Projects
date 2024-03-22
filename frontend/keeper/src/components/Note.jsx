@@ -46,7 +46,8 @@ function Note(props) {
             Bookmark: newMark
         }
 
-        await updateDb(obj, props.object_id)
+        await updateDb(obj, props.object_id, props.coll)
+
         if (newMark === true) {
             Message(enqueueSnackbar, "Bookmarked", 'success')
         }

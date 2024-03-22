@@ -6,13 +6,17 @@ import CreateArea from "./CreateArea";
 import { SnackbarProvider } from 'notistack';
 import { insertDb, getdb, updateDb, deleteDb } from "./DatabaseReq";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useLocation } from "react-router-dom";
+
 function App() {
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(false);
+    let location = useLocation();
+    const collection_name = location.state
     useEffect(() => {//this will fetch intiall data from the api 
-        async function InitialFetchNotes() {
+        async function intialFetchNotes() {
             try {
-                let intialNotes = await getdb();
+                let intialNotes = await getdb(collection_name);
                 setNotes([...intialNotes]);
                 console.log("found notes for the users")
             }
@@ -20,17 +24,18 @@ function App() {
                 console.log("Notes is empty for the user")
             }
         }
-        InitialFetchNotes();
-    }, [])
+        intialFetchNotes();
+
+    }, [collection_name])
 
     async function addNote(newNote) {
         console.log("add note in appjs", newNote)
-        await insertDb(newNote)
+        await insertDb(newNote, collection_name)
         setNotes((prevNotes) => {//display the new note after inserting the note into the database minimize datbase calling
             return [...prevNotes, newNote];
         });
         //mark for inspection no use of this
-        let noteLists = await getdb();//this will continues after useeffect
+        let noteLists = await getdb(collection_name);//this will continues after useeffect
         setNotes([...noteLists])
     }
 
@@ -43,7 +48,7 @@ function App() {
         //loading changing the loading state
         setLoading(true);
         //this will wait till database req has been complete after that then execute
-        deleteDb(object_id).then(x => {
+        deleteDb(object_id, collection_name).then(x => {
             let data = notes.filter((noteItem, index) => {
                 return index !== id;
             });
@@ -68,7 +73,7 @@ function App() {
             updateNote.content = prevNote.content;
         }
 
-        await updateDb(updateNote, uniqueObjId)
+        await updateDb(updateNote, uniqueObjId, collection_name)
 
     }
 
@@ -92,6 +97,7 @@ function App() {
                             Bookmark={noteItem.Bookmark}
                             onDelete={deleteNote}
                             onUpdate={updateNote}
+                            coll={collection_name}
                         />
                     );
                 })}
