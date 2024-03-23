@@ -7,7 +7,7 @@ import cors from "cors";
 const app = express();
 const port = 4000;
 const connectionString = 'mongodb://localhost:27017';
-const database_name = "keeper"; // database name
+const database_name = "IdeaVault"; // database name
 const connection = new MongoClient(connectionString); // main connection object
 
 app.use(bodyParser.urlencoded({ extended: true })); // middleware which fetches the form data like { id, title, content }
