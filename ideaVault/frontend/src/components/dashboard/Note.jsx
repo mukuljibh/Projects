@@ -7,10 +7,11 @@ import Bookmark from "@mui/icons-material/Bookmark";
 import { updateDb } from "./DatabaseReq";
 import Message from "./Message";
 import { useSnackbar } from 'notistack';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 function Note(props) {
-
+    const [loading, setLoading] = useState(false);
     const [eventUpdateHandle, seteventUpdateHandle] = useState({ title: "", content: "", Bookmark: false });
     const [mark, setmark] = useState(false);//set state asynch does not reflect immediate changes that why 
     const { enqueueSnackbar } = useSnackbar();
@@ -19,8 +20,10 @@ function Note(props) {
         setmark(props.Bookmark)
     }, [props.Bookmark])
 
-    function handledelete(event) {
-        props.onDelete(props.id, props.object_id);
+    async function handledelete(event) {
+        setLoading(true)
+        await props.onDelete(props.id, props.object_id);
+        setLoading(false)
     }
 
     function handlecontent(event) {
@@ -55,6 +58,9 @@ function Note(props) {
 
     return (
         <div className="note">
+            {
+                loading ? <LinearProgress color="success" /> : null
+            }
             {mark ? <BookmarkIcon className="bookmark" /> : null}
             <form>
                 <h1 id="title"
@@ -62,6 +68,7 @@ function Note(props) {
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                 >{props.title}</h1>
+
                 <p id="content"
                     onInput={handlecontent}
                     contentEditable={true}
@@ -71,13 +78,10 @@ function Note(props) {
 
                 <Fab size="large" color="inherit" aria-label="edit">
                     <EditIcon onClick={async () => {
-
-                        /*const obj = {
-                            _id: props.object_id,
-                            title: eventUpdateHandle.title,
-                            content: eventUpdateHandle.content
-                        }*/
+                        setLoading(true)
                         await props.onUpdate(eventUpdateHandle, props.object_id, props.id)
+                        setLoading(false)
+
                         Message(enqueueSnackbar, 'Updated', 'success')
 
                     }} />
@@ -92,7 +96,9 @@ function Note(props) {
 
                 <Fab size="small" onClick={BookmarkHandle}>
                     <Bookmark />
+
                 </Fab>
+
             </form>
         </div >
     );

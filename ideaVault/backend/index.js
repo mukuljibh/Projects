@@ -81,13 +81,13 @@ app.patch("/modify", async (req, res) => {
     }
 })
 //user authentication and authorization routes
-
 app.post("/register", async (req, res) => {
     const user = req.body;
     try {
         const db = connection.db(database_name);
         const collection = db.collection('User_detail');
-        await collection.insertOne({ Username: user.Username, Password: user.password });
+        console.log(user)
+        await collection.insertOne({ Username: user.Username, Password: user.Password });
         res.status(201).json({ msg: "succesfully inserted" });
     }
     catch (err) {
@@ -100,7 +100,9 @@ app.post("/auth", async (req, res) => {
     try {
         const db = connection.db(database_name);
         const collection = db.collection('User_detail');
-        let data = await collection.findOne({ Username: user.Username, Password: user.password });
+
+        let data = await collection.findOne({ Username: user.Username, Password: user.Password });
+
         if (data) {
             res.status(201).json({ success: true, msg: "found user" });
         }

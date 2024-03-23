@@ -5,12 +5,10 @@ import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { SnackbarProvider } from 'notistack';
 import { insertDb, getdb, updateDb, deleteDb } from "./DatabaseReq";
-import CircularProgress from '@mui/material/CircularProgress';
 import { useLocation } from "react-router-dom";
 
 function App() {
     const [notes, setNotes] = useState([]);
-    const [loading, setLoading] = useState(false);
     let location = useLocation();
     const collection_name = location.state
     useEffect(() => {//this will fetch intiall data from the api 
@@ -39,22 +37,16 @@ function App() {
         setNotes([...noteLists])
     }
 
-    function deleteNote(id, object_id) {
-        /*
+
+    async function deleteNote(id, object_id) {
+        //this will wait till database req has been complete after that then execute
+        await deleteDb(object_id, collection_name)
         let data = notes.filter((noteItem, index) => {
             return index !== id;
-        });*/
-        //this part does not require to hit database
-        //loading changing the loading state
-        setLoading(true);
-        //this will wait till database req has been complete after that then execute
-        deleteDb(object_id, collection_name).then(x => {
-            let data = notes.filter((noteItem, index) => {
-                return index !== id;
-            });
-            setNotes([...data])
-            setLoading(false);
-        })
+        });
+        setNotes([...data])
+
+
     }
     async function updateNote(updateNote, uniqueObjId, index) {
         let prevNote = notes[index];
@@ -79,12 +71,10 @@ function App() {
 
     return (
         <div>
-            <Header />
+            <Header username={collection_name} />
             <SnackbarProvider><CreateArea onAdd={addNote} /></SnackbarProvider>
             <SnackbarProvider maxSnack={3}>
-                {
-                    loading ? <CircularProgress /> : null
-                }
+
                 {notes.map((noteItem, index) => {
                     return (
                         <Note

@@ -27,12 +27,17 @@ async function getdb(collection_name) {
 }
 async function updateDb(updateNote, uniqueObjId, collection_name) {// This module update a particular note
     try {
-        await axios.patch('http://localhost:4000/modify', {
-            _id: uniqueObjId,
-            title: updateNote.title,
-            content: updateNote.content,
-            Bookmark: updateNote.Bookmark,
-            coll: collection_name
+        await new Promise((resolve, reject) => {
+            setTimeout(async () => {
+                await axios.patch('http://localhost:4000/modify', {
+                    _id: uniqueObjId,
+                    title: updateNote.title,
+                    content: updateNote.content,
+                    Bookmark: updateNote.Bookmark,
+                    coll: collection_name
+                })
+                return resolve()
+            }, 500)
         })
         console.log("update success")
     }

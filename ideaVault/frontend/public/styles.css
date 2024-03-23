@@ -24,7 +24,12 @@
     font-family: "McLaren", cursive;
     font-weight: 200;
   }
-  
+  .header-stack {
+    position: absolute; /* Make the Stack component positioned absolute */
+    top: 10px; /* Adjust the value as needed to move the Stack component up */
+    right: 10px; 
+    /* Add other styles as needed */
+}
   footer {
     position: absolute;
     text-align: center;
