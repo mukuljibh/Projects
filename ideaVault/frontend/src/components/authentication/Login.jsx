@@ -10,7 +10,7 @@ function Login() {
     const [valid, setValid] = useState(false);
     const [user, setUser] = useState({
         Username: "",
-        password: ""
+        Password: ""
     });
 
     function handleChange(event) {
@@ -25,6 +25,8 @@ function Login() {
 
     async function login() {
         let userNoteData = await authenticateUser(user);
+        console.log(user)
+
         if (userNoteData) {
             Navigate('/app', { state: user.Username });
         }

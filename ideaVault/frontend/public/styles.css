@@ -11,6 +11,7 @@
     background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
     padding: 0 16px;
   }
+
   
   header {
     background-color: #f5ba13;
@@ -25,10 +26,10 @@
     font-weight: 200;
   }
   .header-stack {
-    position: absolute; /* Make the Stack component positioned absolute */
-    top: 10px; /* Adjust the value as needed to move the Stack component up */
+    position: absolute; 
+    top: 10px; 
     right: 10px; 
-    /* Add other styles as needed */
+    
 }
   footer {
     position: absolute;

@@ -67,17 +67,23 @@ async function deleteDb(object_id, collection_name) {
 
 async function registerUserDetails(user) {
     try {
-        await axios.post('http://localhost:4000/register', user)
-        return true
-    }
-    catch (err) {
+        let succesMessageFlagFromApi = await axios.post('http://localhost:4000/register', user)
+        return succesMessageFlagFromApi.data.flag
+    } catch (err) {
         return false
     }
 }
 async function authenticateUser(user) {
     try {
-        let flag = await axios.post('http://localhost:4000/auth', user)
-        return flag.data.success
+        let flag = await new Promise((resolve, reject) => {
+            setTimeout(async () => {
+                let flag = await axios.post('http://localhost:4000/auth', user)
+
+                return resolve(flag.data.success);
+            }, 5000)
+        })
+        return flag
+
     }
     catch (err) {
         return "somethin went wrong ";

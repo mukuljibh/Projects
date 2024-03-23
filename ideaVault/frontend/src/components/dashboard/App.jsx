@@ -17,9 +17,11 @@ function App() {
                 let intialNotes = await getdb(collection_name);
                 setNotes([...intialNotes]);
                 console.log("found notes for the users")
+
             }
             catch (err) {
                 console.log("Notes is empty for the user")
+
             }
         }
         intialFetchNotes();
