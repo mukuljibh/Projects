@@ -37,8 +37,8 @@ function Login() {
     }
 
     async function authenticate() {
-        let a = await authenticateUser(user);
-        setValid(a);
+        let authenticUserFlag = await authenticateUser(user);
+        setValid(authenticUserFlag);
     }
 
     return (
