@@ -6,9 +6,9 @@ import cors from "cors";
 
 const app = express();
 const port = 4000;
-const connectionString = 'mongodb://localhost:27017';
+const CONNNECTIONSTRING = 'mongodb://localhost:27017';
 const DATABASE_NAME = "IdeaVault"; // database name
-const connection = new MongoClient(connectionString); // main connection object
+const CONNECTION = new MongoClient(CONNNECTIONSTRING); // main connection object
 
 app.use(bodyParser.urlencoded({ extended: true })); // middleware which fetches the form data like { id, title, content }
 app.use(bodyParser.json());
@@ -16,7 +16,7 @@ app.use(cors()); // for cross-generation support
 
 // Database connection establishment
 try {
-    connection.connect(); // making connection
+    CONNECTION.connect(); // making connection
     console.log('Connected successfully to Database');
 } catch (error) {
     console.log('Database unreachable');
@@ -26,7 +26,7 @@ try {
 app.get("/get", async (req, res) => {
     try {
         const collection_name = req.query.coll;
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection = db.collection(collection_name);
         let data = await collection.find({}).toArray();
         res.send(data);
@@ -41,7 +41,7 @@ app.post("/add", async (req, res) => {
     try {
         const userNote = req.body.newNote;
         const collection_name = req.body.coll;
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection = db.collection(collection_name);
         await collection.insertOne({ title: userNote.title, content: userNote.content, Bookmark: userNote.bookmark });
         res.status(200).json({ message: "Note added successfully" }); // .json is necessary so that await returns a proper promise
@@ -52,10 +52,10 @@ app.post("/add", async (req, res) => {
 });
 
 // Deleting particular notes from the database
-app.delete("/deleteOne", async (req, res) => {
+app.delete("/delete", async (req, res) => {
     let noteId = new ObjectId(req.body.object_id); // contain the unique object id of each individual note
     try {
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection_name = req.body.coll;
         const collection = db.collection(collection_name);
         await collection.deleteOne({ _id: noteId });
@@ -70,7 +70,7 @@ app.patch("/modify", async (req, res) => {
     let targetUpdateNote = req.body;
     let noteId = new ObjectId(targetUpdateNote._id);
     try {
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection_name = targetUpdateNote.coll;
         const collection = db.collection(collection_name);
         await collection.updateOne({ _id: noteId }, { $set: { title: targetUpdateNote.title, content: targetUpdateNote.content, Bookmark: targetUpdateNote.Bookmark } });
@@ -84,7 +84,7 @@ app.patch("/modify", async (req, res) => {
 app.post("/register", async (req, res) => {
     const user = req.body;
     try {
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection = db.collection('UserDetail');
         await collection.insertOne({ Username: user.Username, Password: user.Password });
         res.status(201).json({ flag: true, msg: "successfully inserted" });
@@ -96,7 +96,7 @@ app.post("/register", async (req, res) => {
 app.post("/auth", async (req, res) => {
     const user = req.body;
     try {
-        const db = connection.db(DATABASE_NAME);
+        const db = CONNECTION.db(DATABASE_NAME);
         const collection = db.collection('UserDetail');
 
         let data = await collection.findOne({ Username: user.Username, Password: user.Password });

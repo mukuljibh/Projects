@@ -50,10 +50,9 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function Signin() {
+function SignIn() {
     const [alert, setAlert] = useState(null);
     const [Loading, setLoading] = useState(null);
-    const [checkMsg, setCheckMsg] = useState(null)
     const classes = useStyles();
     let Navigate = useNavigate(true);
     const [user, setUser] = useState({
@@ -69,7 +68,7 @@ function Signin() {
         if (userNoteData) {
             setAlert(true)
             setTimeout(() => {
-                Navigate('/app', { state: user.Username });
+                Navigate('/App', { state: user.Username });
             }, 2000)
 
         }
@@ -160,7 +159,7 @@ function Signin() {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="/signup" variant="body2">
+                                    <Link href="/SignUp" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>
@@ -179,4 +178,4 @@ function Signin() {
 };
 
 
-export default Signin;
+export default SignIn;

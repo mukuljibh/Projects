@@ -51,7 +51,7 @@ async function deleteDb(object_id, collection_name) {
         //introducing 500ms delay so that database does not overloaded
         await new Promise((resolve, reject) => {
             setTimeout(async () => {
-                await axios.delete('http://localhost:4000/deleteOne', {
+                await axios.delete('http://localhost:4000/delete', {
                     data: { object_id, coll: collection_name }
                 })
                 return resolve()
